@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .box { fill:#f8f9fb; stroke:#2b6cb0; stroke-width:2px; rx:8; }
+    .small { font: 12px/1.2 "Segoe UI", Arial, sans-serif; fill:#0b2a4a }
+    .title { font: 16px/1.2 "Segoe UI", Arial, sans-serif; fill:#07315a; font-weight:700 }
+    .arrow { stroke:#6b7280; stroke-width:2; fill:none; marker-end:url(#arrowhead) }
+    .note { font: 11px "Segoe UI", Arial, sans-serif; fill:#374151 }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#6b7280" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="24" y="32" class="title">RAG Chatbot Architecture — Node.js + OpenAI embeddings + Pinecone</text>
+
+  <!-- Client / UI -->
+  <rect x="24" y="64" width="220" height="90" class="box" />
+  <text x="36" y="92" class="small">Client / UI</text>
+  <text x="36" y="112" class="note">Web (React) / Mobile / CLI</text>
+
+  <!-- API Server -->
+  <rect x="280" y="64" width="260" height="110" class="box" />
+  <text x="292" y="92" class="small">API Server (Express)</text>
+  <text x="292" y="112" class="note">Endpoints: /api/ask, /api/ingest, /health</text>
+
+  <!-- Ingestion -->
+  <rect x="580" y="64" width="260" height="140" class="box" />
+  <text x="592" y="92" class="small">Ingestion Pipeline</text>
+  <text x="592" y="112" class="note">File parsing (txt, md, pdf), chunking, embedding</text>
+  <text x="592" y="132" class="note">Token-aware chunking, overlap, metadata tagging</text>
+
+  <!-- Storage & Vector DB -->
+  <rect x="920" y="64" width="240" height="140" class="box" />
+  <text x="932" y="92" class="small">Storage & Vector DB</text>
+  <text x="932" y="112" class="note">Blob/Docs (S3), Pinecone index (vectors + metadata)</text>
+
+  <!-- Embedding provider -->
+  <rect x="580" y="240" width="260" height="80" class="box" />
+  <text x="592" y="268" class="small">Embeddings (OpenAI)</text>
+  <text x="592" y="288" class="note">text-embedding-3-small / large</text>
+
+  <!-- LLM for generation -->
+  <rect x="920" y="240" width="240" height="100" class="box" />
+  <text x="932" y="268" class="small">LLM (OpenAI Chat)</text>
+  <text x="932" y="288" class="note">gpt-4o / gpt-3.5-turbo; system + context + user prompt</text>
+
+  <!-- Re-ranker & Cache -->
+  <rect x="280" y="240" width="260" height="90" class="box" />
+  <text x="292" y="268" class="small">Optional Re-ranker</text>
+  <text x="292" y="288" class="note">Cross-encoder or LLM re-ranking for precision</text>
+
+  <rect x="24" y="240" width="220" height="80" class="box" />
+  <text x="36" y="268" class="small">Cache & Rate Limit</text>
+  <text x="36" y="288" class="note">Redis for caching embeddings/results</text>
+
+  <!-- Arrows: Client -> API Server -> Retrieval -> LLM -->
+  <path d="M244 109 L280 109" class="arrow" />
+  <path d="M540 109 L580 109" class="arrow" />
+  <path d="M840 109 L920 109" class="arrow" />
+
+  <!-- API -> Ingest (control path) -->
+  <path d="M540 130 L580 130" class="arrow" stroke-dasharray="6,4" />
+  <text x="420" y="150" class="note">/api/ingest (multipart / URL)</text>
+
+  <!-- Ingestion -> Embedding provider -->
+  <path d="M710 204 L710 240" class="arrow" />
+  <path d="M710 320 L710 320" class="arrow" />
+
+  <!-- Embeddings -> Pinecone upsert -->
+  <path d="M840 280 L920 280" class="arrow" />
+
+  <!-- Query flow: API -> Pinecone -> (re-ranker) -> LLM -> Client -->
+  <path d="M540 304 L580 304" class="arrow" />
+  <path d="M840 304 L920 304" class="arrow" />
+  <path d="M1160 300 L1200 300" class="arrow" />
+
+  <!-- Notes & callouts -->
+  <rect x="24" y="360" width="1140" height="160" fill="#ffffff" stroke="#e6eef8" rx="6" />
+  <text x="36" y="386" class="small">Design notes:</text>
+  <text x="36" y="406" class="note">• Use token-aware chunking (tiktoken) to avoid splitting semantic units.</text>
+  <text x="36" y="424" class="note">• Store metadata with each vector: source, url, creation_time, chunk_index. Use for filtering and citations.</text>
+  <text x="36" y="442" class="note">• Implement synthetic query augmentation and reranking for best precision (hybrid search + LLM rerank).</text>
+  <text x="36" y="460" class="note">• Security: never commit API keys; use secrets manager; add request rate-limiting and input sanitization.</text>
+  <text x="36" y="478" class="note">• Monitoring: log retrieval hits, embedding costs, latency, Pinecone usage.</text>
+
+  <!-- Footer -->
+  <text x="24" y="620" class="small">Generated: docs-rag-chatbot/architecture.svg — editable SVG diagram describing components, data flow, and notes.</text>
+</svg>
